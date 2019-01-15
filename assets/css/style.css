@@ -12,11 +12,15 @@ body {
     height: 100%;
     top: 0;
     left: 0;
-    background: url('../images/bg_fist.jpg') no-repeat center center fixed;
+    /* background: url('../images/bg_fist.jpg') no-repeat center center fixed; */
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
+}
+
+#name-form {
+    padding-top: 50%;
 }
 
 img {

@@ -41,14 +41,33 @@ const config = {
 //     // Privacy policy url.
 //     // privacyPolicyUrl: '<your-privacy-policy-url>'
 // };
-// firebase.initializeApp(config);
+function nameCheck(input) {
+    if (Filter.isProfane(input.val())) {
+        input.val("");
+        console.log("Inappropriate name");
+        return false
+    };
+};
 
-// const database = firebase.database();
+firebase.initializeApp(config);
 
+const database = firebase.database();
 
 // database.ref().on("value", function(snapshot) {
 //     console.log(snapshot.val());
 // });
+
+$("#name-input").bind("keypress", function(key) {
+    const value = String.fromCharCode(event.which);
+    // Only grab letters a-z, numbers and whitespaces
+    const pattern = new RegExp(/[a-z0-9 ]/i);
+    return pattern.test(value);
+});
+
+$("#name-form").on("submit", function() {
+    $("#start-screen").fadeOut();
+    return false;
+});
 
 // function shake() {
 //     $("img").animate({"text-indent":45}, {
