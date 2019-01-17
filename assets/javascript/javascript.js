@@ -7,46 +7,15 @@ const config = {
     storageBucket: "rps-multiplayer-bbb91.appspot.com",
     messagingSenderId: "199186993993"
 };
-
-// const uiConfig = {
-//     callbacks: {
-//       signInSuccessWithAuthResult: function(authResult, redirectUrl) {
-//         // User successfully signed in.
-//         // Return type determines whether we continue the redirect automatically
-//         // or whether we leave that to developer to handle.
-//         console.log(authResult);
-//         return false;
-//       },
-//       uiShown: function() {
-//         // The widget is rendered.
-//         // Hide the loader.
-//         document.getElementById('loader').style.display = 'none';
-//         //$(".firebaseui-label[for='name']").text("Display Name");
-//       }
-//     },
-//     // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
-//     signInFlow: 'popup',
-//     signInSuccessUrl: '',
-//     signInOptions: [
-//       // Leave the lines as is for the providers you want to offer your users.
-//       //firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-//       //firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-//      // firebase.auth.TwitterAuthProvider.PROVIDER_ID,
-//       //firebase.auth.GithubAuthProvider.PROVIDER_ID,
-//       firebase.auth.EmailAuthProvider.PROVIDER_ID,
-//       //firebase.auth.PhoneAuthProvider.PROVIDER_ID
-//     ],
-//     // Terms of service url.
-//     // tosUrl: '<your-tos-url>',
-//     // Privacy policy url.
-//     // privacyPolicyUrl: '<your-privacy-policy-url>'
-// };
+// Check if display name is appropriate.
 function nameCheck(input) {
     if (Filter.isProfane(input.val())) {
+        console.log(input.val());
         input.val("");
         console.log("Inappropriate name");
         return false
     };
+    return true;
 };
 
 firebase.initializeApp(config);
@@ -65,7 +34,16 @@ $("#name-input").bind("keypress", function(key) {
 });
 
 $("#name-form").on("submit", function() {
+    if (!nameCheck($("#name-input"))) { 
+        alert("Please use an appropriate name!");
+        return false;
+    };
+
     $("#start-screen").fadeOut();
+
+    $("#game-screen").fadeIn();
+
+    console.log(database.ref("servers"));
     return false;
 });
 

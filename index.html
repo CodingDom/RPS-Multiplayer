@@ -34,7 +34,33 @@
                 </div>
             </div>
         </div>
-
+        
+        <div id="game-screen">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-4">
+                        <h3 id="wait-text">Waiting For Additional Player<span id="ellipsis"></span></h3>
+                        <h3 id="time-text">Time Remaining: <span id="timer">15</span></h3>
+                    </div>
+                    <div class="col-4"></div>    
+                </div>
+                <div class="row">
+                    <div id="player1" class="col-4 choice">
+                        <div class=>
+                            <h4 data-type="rock" class="btn-choice">ROCK</h4>
+                            <h4 data-type="paper" class="btn-choice">PAPER</h4>
+                            <h4 data-type="scissors" class="btn-choice">SCISSORS</h4>
+                        </div>
+                        <h4 class="stats">Wins: <span class="wins">0</span>  |  Losses: <span class="losses">0</span>  |  Ties: <span>0</span></h4>
+                    </div>
+                    <div class="col-4"></div>
+                    <div id="player2" class="col-4 choice">
+                        <h4 class="stats">Wins: <span class="wins">0</span>  |  Losses: <span class="losses">0</span>  |  Ties: <span>0</span></h4>
+                    </div>
+                </div>
+            </div>
+        </div>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>

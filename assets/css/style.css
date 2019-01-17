@@ -35,3 +35,32 @@ img {
 .firebaseui-label[for*='name']::before {
     content: "Display Name";
 }
+
+#game-screen {
+    display: none;
+}
+
+.choice {
+    padding-top: 5%;
+    height: 33vw;
+    width: 100%;
+    background-color: rgb(134, 218, 160);
+    border: 3px solid rgb(140, 193, 230);
+    color: white;
+}
+
+.btn-choice {
+    margin-top: 20px;
+}
+
+.btn-choice:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.stats {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
