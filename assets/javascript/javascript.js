@@ -21,7 +21,9 @@ function nameCheck(input) {
 firebase.initializeApp(config);
 
 const database = firebase.database();
-
+let userData = null;
+let userName;
+let currServer;
 // database.ref().on("value", function(snapshot) {
 //     console.log(snapshot.val());
 // });
@@ -38,12 +40,35 @@ $("#name-form").on("submit", function() {
         alert("Please use an appropriate name!");
         return false;
     };
-
+    userName = $("#name-input").val();
     $("#start-screen").fadeOut();
 
     $("#game-screen").fadeIn();
 
-    console.log(database.ref("servers"));
+    database.ref("servers").once("value", function(snapshot) {
+        const serverList = snapshot.val();
+        const arr = Object.keys(serverList);
+        for (let i = 0; i < arr.length; i++) {
+            const curr = serverList[arr[i]];
+            if (arr[i] != "test" && Object.keys(curr).length < 2) {
+                currServer = database.ref(`servers/${arr[i]}`);
+                userData = currServer.push().push({
+                    name : userName,
+                    choice : "none",
+                })
+            };
+        };
+
+        if (!userData) {
+            currServer = database.ref(`servers`).push();
+            userData = currServer.push({
+                name : userName,
+                choice : "none",
+            });
+        };
+
+        userData.onDisconnect().remove();
+    });
     return false;
 });
 
