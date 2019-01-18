@@ -1,3 +1,5 @@
+$(document).ready(function() {
+
 // Initialize Firebase
 const config = {
     apiKey: "AIzaSyBYPX3g0s3CQKWf8h50SUtg-ww7auC1xO8",
@@ -7,6 +9,14 @@ const config = {
     storageBucket: "rps-multiplayer-bbb91.appspot.com",
     messagingSenderId: "199186993993"
 };
+
+firebase.initializeApp(config);
+
+const database = firebase.database();
+let userData = null;
+let userName;
+let currServer;
+
 // Check if display name is appropriate.
 function nameCheck(input) {
     if (Filter.isProfane(input.val())) {
@@ -18,34 +28,16 @@ function nameCheck(input) {
     return true;
 };
 
-firebase.initializeApp(config);
-
-const database = firebase.database();
-let userData = null;
-let userName;
-let currServer;
-// database.ref().on("value", function(snapshot) {
-//     console.log(snapshot.val());
-// });
-
-$("#name-input").bind("keypress", function(key) {
-    const value = String.fromCharCode(event.which);
-    // Only grab letters a-z, numbers and whitespaces
-    const pattern = new RegExp(/[a-z0-9 ]/i);
-    return pattern.test(value);
-});
-
-$("#name-form").on("submit", function() {
-    if (!nameCheck($("#name-input"))) { 
-        alert("Please use an appropriate name!");
-        return false;
+// Initialize and set up game server
+function serverHandler() {
+    const defaultStats = {
+        name : userName,
+        choice : "none",
+        wins : 0,
+        losses : 0,
+        ties : 0
     };
-    userName = $("#name-input").val();
-    $("#player1 .disp-name").text(userName);
-    $("#start-screen").fadeOut();
-
-    $("#game-screen").fadeIn();
-
+    
     database.ref("servers").once("value", function(snapshot) {
         const serverList = snapshot.val();
         const arr = Object.keys(serverList);
@@ -53,31 +45,83 @@ $("#name-form").on("submit", function() {
             const curr = serverList[arr[i]];
             if (arr[i] != "test" && Object.keys(curr).length < 2) {
                 currServer = database.ref(`servers/${arr[i]}`);
-                userData = currServer.push({
-                    name : userName,
-                    choice : "none",
-                })
+                userData = currServer.push(defaultStats);
             };
         };
 
         if (!userData) {
             currServer = database.ref(`servers`).push();
-            userData = currServer.push({
-                name : userName,
-                choice : "none",
-            });
+            userData = currServer.push(defaultStats);
         };
 
         userData.onDisconnect().remove();
 
+        let oppData = null;
+
         currServer.on("child_added", function(snapshot) {
+            if (userData.key == snapshot.key) {return;};
             const newPlayer = snapshot.val();
-            console.log(newPlayer);
-            $("#player2 .disp-name").text(newPlayer.name);
+            const updateStat = function(stat) {
+                $(`#player2 .${stat.key}`).text(stat.val());
+            };
+            Object.keys(newPlayer).forEach(function(stat) {
+                $(`#player2 .${stat}`).text(newPlayer[stat]);
+            });
+
+            oppData = database.ref("servers/"+currServer.key+"/"+snapshot.key);
+            oppData.on("child_changed", updateStat);
+
+            $("#player2 .name").text(newPlayer.name);
+            $("#wait-text").css("display","none");
+            $("#time-text").css("display", "block");
+        });
+
+        currServer.on("child_removed", function(snapshot) {
+            if (snapshot.key == userData.key) {
+                $("#game-screen").css("display","none");
+                $("#start-screen").fadeIn();
+            }
+            else {
+                $("#player2 .name").text("Opponent");
+                $("#player2 .wins, #player2 .losses, #player2 .ties").text("0");
+            };
+            if (oppData) {
+                oppData.off();
+                oppData = null;
+            };
         });
     });
+};
+
+// User input handler
+$("#name-input").bind("keypress", function(key) {
+    if (key.which == 13) {
+        $("#name-form").submit();
+        return;
+    };
+    const value = String.fromCharCode(key.which);
+    // Only grab letters a-z, numbers and whitespaces
+    const pattern = new RegExp(/[a-z0-9 ]/i);
+    return pattern.test(value);
+});
+
+// Form submission handler
+$("#name-form").on("submit", function() {
+    if (!nameCheck($("#name-input"))) { 
+        alert("Please use an appropriate name!");
+        return false;
+    };
+    
+    userName = $("#name-input").val();
+    $("#player1 .name").text(userName);
+    $("#start-screen").fadeOut();
+    $("#game-screen").fadeIn();
+
+    serverHandler();
 
     return false;
+});
+
 });
 
 // function shake() {
