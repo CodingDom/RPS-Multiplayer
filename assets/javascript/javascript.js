@@ -41,6 +41,7 @@ $("#name-form").on("submit", function() {
         return false;
     };
     userName = $("#name-input").val();
+    $("#player1 .disp-name").text(userName);
     $("#start-screen").fadeOut();
 
     $("#game-screen").fadeIn();
@@ -52,7 +53,7 @@ $("#name-form").on("submit", function() {
             const curr = serverList[arr[i]];
             if (arr[i] != "test" && Object.keys(curr).length < 2) {
                 currServer = database.ref(`servers/${arr[i]}`);
-                userData = currServer.push().push({
+                userData = currServer.push({
                     name : userName,
                     choice : "none",
                 })
@@ -68,7 +69,14 @@ $("#name-form").on("submit", function() {
         };
 
         userData.onDisconnect().remove();
+
+        currServer.on("child_added", function(snapshot) {
+            const newPlayer = snapshot.val();
+            console.log(newPlayer);
+            $("#player2 .disp-name").text(newPlayer.name);
+        });
     });
+
     return false;
 });
 
