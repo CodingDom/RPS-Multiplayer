@@ -49,6 +49,11 @@ img {
     color: white;
 }
 
+.name {
+    font-weight: bold;
+    color: rgb(40, 165, 255);
+}
+
 .btn-choice {
     margin-top: 20px;
 }
