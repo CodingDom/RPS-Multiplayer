@@ -23,10 +23,10 @@
                 <div class="row">
                     <div class="col-4"></div>
                     <div class="col-4">        
-                        <form id="name-form" class="form">
+                        <form id="name-form" class="form" autocomplete="off">
                             <div class="form-group mx-sm-3 mb-2">
                                 <label for="name-input" class="form-control btn-info">Display Name</label>
-                                <input type="text" class="form-control" id="name-input" placeholder="John Cena" required>
+                                <input type="text" class="form-control" id="name-input" placeholder="John Cena" value="" required>
                             </div>
                             <button type="submit" class="btn btn-info mb-2">Play</button>
                         </form>
@@ -48,17 +48,17 @@
                 <div class="row">
                     <div id="player1" class="col-4 choice">
                         <div>
-                            <h2 class="disp-name">Player1</h2>
+                            <h2 class="name">Player1</h2>
                             <h4 data-type="rock" class="btn-choice">ROCK</h4>
                             <h4 data-type="paper" class="btn-choice">PAPER</h4>
                             <h4 data-type="scissors" class="btn-choice">SCISSORS</h4>
                         </div>
-                        <h4 class="stats">Wins: <span class="wins">0</span>  |  Losses: <span class="losses">0</span>  |  Ties: <span>0</span></h4>
+                        <h4 class="stats">Wins: <span class="wins">0</span>  |  Losses: <span class="losses">0</span>  |  Ties: <span class="ties">0</span></h4>
                     </div>
                     <div class="col-4"></div>
                     <div id="player2" class="col-4 choice">
-                        <h2 class="disp-name">Player2</h2>
-                        <h4 class="stats">Wins: <span class="wins">0</span>  |  Losses: <span class="losses">0</span>  |  Ties: <span>0</span></h4>
+                        <h2 class="name">Opponent</h2>
+                        <h4 class="stats">Wins: <span class="wins">0</span>  |  Losses: <span class="losses">0</span>  |  Ties: <span class="ties">0</span></h4>
                     </div>
                 </div>
             </div>
