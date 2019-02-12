@@ -13,9 +13,16 @@ const config = {
 firebase.initializeApp(config);
 
 const database = firebase.database();
+let currServer;
 let userData = null;
 let userName;
-let currServer;
+
+let plrChoice = null;
+let oppChoice = null;
+
+const timeLimit = 15; // Amount of seconds per round
+
+let timerInt;
 
 // Check if display name is appropriate.
 function nameCheck(input) {
@@ -27,6 +34,48 @@ function nameCheck(input) {
     };
     return true;
 };
+
+
+// Compares player choices
+function checkChoice() {
+    if (!plrChoice || !oppChoice) return;
+    clearInterval(timerInt);
+    let data;
+    userData.once("value", function(snapshot) {
+        data = snapshot.val();
+    });
+    switch (plrChoice) {
+        case oppChoice:
+            data["ties"]++;
+        break;
+        case "rock":
+            if (oppChoice == "paper") {
+                data["losses"]++;
+            } else {
+                data["wins"]++;
+            };
+        break;
+        case "scissors":
+            if (oppChoice == "rock") {
+                data["losses"]++;
+            } else {
+                data["wins"]++;
+            };
+        break;
+        case "paper":
+            if (oppChoice == "scissors") {
+                data["losses"]++;
+            } else {
+                data["wins"]++;
+            };
+        break;
+    }
+    console.log(data);
+    userData.set(data);
+    Object.keys(data).forEach(function(stat) {
+        $(`#player1 .${stat}`).text(data[stat]);
+    });
+}
 
 // Initialize and set up game server
 function serverHandler() {
@@ -63,6 +112,10 @@ function serverHandler() {
             const newPlayer = snapshot.val();
             const updateStat = function(stat) {
                 $(`#player2 .${stat.key}`).text(stat.val());
+                if (stat.key == "choice") {
+                    oppChoice = stat.val();
+                    checkChoice();
+                }
             };
             Object.keys(newPlayer).forEach(function(stat) {
                 $(`#player2 .${stat}`).text(newPlayer[stat]);
@@ -74,6 +127,17 @@ function serverHandler() {
             $("#player2 .name").text(newPlayer.name);
             $("#wait-text").css("display","none");
             $("#time-text").css("display", "block");
+
+            let int = timeLimit;
+            timerInt = setInterval(function() {
+                int--;
+                $("#timer").text(int);
+                if (int <= 0) {
+                    clearInterval(timerInt);
+                    const rand = Math.floor(Math.random()*3);
+                    userData.child("choice").set($(".btn-choice").get()[rand].textContent.toLowerCase());
+                }
+            },1000);
         });
 
         currServer.on("child_removed", function(snapshot) {
@@ -111,7 +175,7 @@ $("#name-form").on("submit", function() {
         alert("Please use an appropriate name!");
         return false;
     };
-    
+
     userName = $("#name-input").val();
     $("#player1 .name").text(userName);
     $("#start-screen").fadeOut();
@@ -119,31 +183,18 @@ $("#name-form").on("submit", function() {
 
     serverHandler();
 
+    $("#name-input").val("");
     return false;
 });
 
+$(".btn-choice").on("click", function() {
+    plrChoice = $(this).text().toLowerCase();
+    userData.child("choice").set(plrChoice);
+    checkChoice();
 });
 
-// function shake() {
-//     $("img").animate({"text-indent":45}, {
-//         duration: 1000,
-//         step: function(now,fx) {
-//             console.log(fx);
-//             $(this).css("transform",`rotate(${now}deg)`);
-//         },
+screen.orientation.lock("landscape").catch(function(exception) {
+    console.log(exception.name, exception.message, exception.code);
+});
 
-//         complete: function() {
-//             $(this).animate({"text-indent":120}, {
-//                 duration: 1000,
-//                 step: function(now,fx) {
-//                     $(this).css("transform",`rotate(${now}deg)`);
-//                 },
-//                 complete: function() {
-//                     shake();
-//                 }
-//             });
-//         },
-//     });
-// };
-
-// shake();
+});
